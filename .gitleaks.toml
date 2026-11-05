@@ -1,0 +1,5 @@
+title = "claude-deepseek source checks"
+[extend]
+useDefault = true
+[allowlist]
+paths = ['''(^|/)(venv|node_modules|\.git)/''']

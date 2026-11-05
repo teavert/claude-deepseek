@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { validateReview } from './policy.mjs';
+const safe = {purpose:'finding_validation', authorization:'User-owned synthetic fixture, expressly authorized for local read-only review.', scope:'Local test fixture only, no live targets.', task:'Check an owner authorization condition for false positives and suggest a fix.'};
+assert.doesNotThrow(() => validateReview(safe));
+assert.throws(() => validateReview({...safe, authorization:''}), /authorization/);
+assert.throws(() => validateReview({...safe, purpose:'offensive_operations'}), /purpose/);
+assert.throws(() => validateReview({...safe, task:'deploy ransomware'}), /blocked locally/);
+assert.throws(() => validateReview({...safe, task:'Authorization: Bearer ' + 'x'.repeat(30)}), /Credential/);
+assert.throws(() => validateReview({...safe, task:'-----BEGIN ' + 'PRIVATE KEY-----'}), /Credential/);
+console.log('PASS: defensive requests accepted; missing scope, disallowed purpose, obvious abuse and credential content rejected before forwarding.');

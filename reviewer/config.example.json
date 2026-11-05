@@ -1,0 +1,6 @@
+{
+  "codexPath": "codex.exe",
+  "model": "gpt-6-astra",
+  "reasoningEffort": "high",
+  "timeoutSeconds": 600
+}

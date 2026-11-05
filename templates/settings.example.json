@@ -1,0 +1,143 @@
+{
+  "apiKeyHelper": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"{{ROOT}}/Get-GatewayKey.ps1\"",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "inherit",
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:4012",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "ANTHROPIC_SMALL_FAST_MODEL": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "CLAUDE_CODE_SUBAGENT_MODEL_FORCE": "0",
+    "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "1048576",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "950000",
+    "ENABLE_TOOL_SEARCH": "true",
+    "ANTHROPIC_AUTH_TOKEN": ""
+  },
+  "permissions": {
+    "allow": [
+      "Agent(frontier-reviewer)",
+      "Agent(finding-validator)",
+      "mcp__codex-subscription__status",
+      "mcp__codex-subscription__delegate",
+      "mcp__codex-subscription__result",
+      "mcp__codex-subscription__cancel"
+    ]
+  },
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "modelPicker": {
+    "options": [
+      {
+        "model": "deepseek-v4.1-flash-1017-uncensored-chains",
+        "label": "DeepSeek V4.1 Flash 1017 uncensored chains + GPT Astra high as reviewer/second brain",
+        "description": "Outrun → Unlid → AllModels, with existing capacity checks and technical-failure rules. GPT Astra high provides planning and review."
+      },
+      {
+        "model": "gpt-6-astra",
+        "label": "GPT Astra high → DeepSeek → existing fallback chain",
+        "description": "GPT Astra high leads. Technical-failure fallback: DeepInfra DeepSeek, then Outrun, Unlid, AllModels."
+      },
+      {
+        "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+        "label": "DeepSeek + GPT Astra high as reviewer/second brain → existing fallback chain",
+        "description": "DeepSeek leads on DeepInfra Priority; GPT Astra high provides planning and review. Technical-failure fallback: Outrun, Unlid, AllModels."
+      }
+    ],
+    "replaceBuiltInOptions": true
+  },
+  "hooks": {
+    "SubagentStart": [
+      {
+        "matcher": "^(frontier-reviewer|finding-validator)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/gateway/status_display.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "^(frontier-reviewer|finding-validator)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/gateway/status_display.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/gateway/status_display.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "^(Agent|Task)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/gateway/status_display.py\" hook",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/workflow/workflow.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/workflow/workflow.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/workflow/workflow.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "\"{{PYTHON}}\" -E -s \"{{ROOT}}/gateway/status_display.py\" render",
+    "padding": 0,
+    "refreshInterval": 1
+  },
+  "modelSettings": {
+    "gpt-6-astra": {
+      "effortLevel": "high"
+    }
+  },
+  "theme": "dark"
+}

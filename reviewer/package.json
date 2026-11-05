@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "name": "claude-codex-subscription-delegate",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.mjs",
+    "test:integration": "node test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7"
+  }
+}
