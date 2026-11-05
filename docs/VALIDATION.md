@@ -1,25 +1,39 @@
-# Validation record — 2026-11-05
+# Release validation — 2026-11-05
 
-Prepared and tested under the current Windows account with Python 3.12.16, Node 24.22.2, pnpm 12.10.1, and gitleaks 8.30.1. Fresh Python and pnpm dependency installs succeeded using the committed version locks.
+Windows-first release, licensed under MIT, copyright (c) 2026 teavert. The owner confirmed publication rights for the gateway, workflow, and reviewer integration. The exported worker supervisor is part of that locally maintained integration; inspection found no third-party source headers or vendored components. Dependencies are installed separately and retain upstream licenses. This is release verification, not a guarantee that the software has no defects.
 
-- Gateway: 66 tests passed, including routing, fallback, native transport, streaming, status, GPT tool mapping, and worker admission.
-- Workflow: 27 tests ran; 26 passed and one skipped because symlink creation was unavailable on this Windows account.
-- Worker supervisor: four cross-process tests passed.
-- Reviewer: policy, cross-session queue/cancellation, and hermetic subscription-authentication failure checks passed. No live Codex/model calls were used. The older test-subscription-auth.mjs and test.mjs remain opt-in live integration tools, excluded from CI.
-- Installation fixture in a directory containing spaces passed: first setup, repeated setup, preserved settings/token, generated DPAPI helper execution, missing credentials, and occupied port. This fixture shares the installed dependency environment through a junction and is not a clean-account installation. It is retained in temporary storage and contains synthetic credentials only.
-- Reviewed file allowlist/content checks and redacted gitleaks candidate scanning passed with no findings. A fresh root commit was created; no source histories were imported. Candidate scanning and complete new-history scanning passed before the private push.
+## Offline and installation checks
 
-Public release remains gated on license/provenance review, a full end-user launch with fresh provider credentials, live provider/model verification, remaining GitHub security settings, artifact review, and a public clone smoke test. The private repository teavert/claude-deepseek was created through Edge. Git uses the account's GitHub noreply identity rather than the machine's personal email. Remote CI, independent clone validation, and security-setting verification remain pending until recorded below.
+Python 3.12.16, Node 24.22.2, pnpm 12.10.1, gitleaks 8.30.1. The release uses locked dependencies and read-only Windows CI with actions pinned to verified commit hashes.
 
-Pydantic emitted dependency warnings about ReadOnly metadata during gateway tests; tests passed. Historical live-verification statements retained in routing documentation describe the original private installation, not this new release.
+- 66 gateway tests passed: routing, capacity guards, refusal/technical-failure boundaries, streaming/no replay, authentication, native transport, status isolation, GPT protocol/tool mapping, and admission.
+- 27 workflow tests ran: 26 passed, one skipped because Windows symlink creation was unavailable. Worker supervisor: four cross-process tests passed. Reviewer policy, shared queue/cancellation, and offline authentication-failure tests passed.
+- Setup with spaces, repeated setup, preserved settings/token, generated DPAPI helper, missing credentials, and occupied port checks passed. A separate private clone installed its own dependencies and passed the complete offline release check.
+- A real isolated-clone launcher check passed through Start-ReliabilityGateway.ps1, Start-ClaudeDeepSeek.ps1, generated hooks/settings, Claude Code, and a live DeepInfra response. The clone used a fresh local gateway token and the owner's existing provider accounts. No provider credentials or session data were committed. Its gateway process was identified and stopped; the working installation was untouched.
+- One earlier worker-test startup timeout led to a longer fixture observation window and diagnostic output. Repeated local checks and independent GitHub Windows CI then passed.
 
-One intermediate full run hit an intermittent worker startup-status timeout. Four targeted reruns passed. The fixture now allows 30 seconds for startup and includes final status/process errors on failure; production admission semantics were not changed. Verify stability in independent Windows CI before public release.
+## Live checks
 
-## Private GitHub verification
+Only synthetic prompts and fixture data were submitted. No private project evidence or raw transcripts were used.
 
-- Private repository: https://github.com/teavert/claude-deepseek ; code commit 3d91fd138b7b452f771ca1be9dab08f232acea8f.
-- Fresh GitHub Windows runner passed dependency installation, offline setup, all offline suites, and candidate/full-history secret scanning: https://github.com/teavert/claude-deepseek/actions/runs/42019047812 . No artifacts were uploaded.
-- A separate authenticated private clone in a directory containing spaces installed its own Python environment and reviewer dependencies and generated fresh local configuration. The complete Test-Release.ps1 suite and secret/history scanning also passed in this clone. It uses the current Windows account, not a separate human account.
-- Dependency graph and Dependabot alerts were enabled and verified in Edge. The private security settings did not offer repository secret scanning/push protection; enable and verify them when available before public release.
-- GitHub explicitly says rulesets will not be enforced for this private repository under the current plan. No ineffective ruleset was saved. Configure enforced main-branch protection when available before public release.
-- No license, public visibility change, tag, release attachment, or published release was created.
+- Authenticated loopback health succeeded; an invalid token was rejected.
+- DeepInfra native Anthropic route returned HTTP 200 using deepseek-ai/DeepSeek-V4.1-Flash-1017, with actual serving route verified.
+- Outrun, Unlid, AllModels, and OpenRouter each returned a real completion using their configured model IDs.
+- The translated chain streamed successfully through Outrun with a completed Anthropic event stream.
+- GPT main completed using gpt-6-astra. A second request returned the expected dynamic tool handoff without executing that tool.
+- Independent reviewer bridge completed the read-only fixture calculation CEDAR-5812|83 using ChatGPT authentication, gpt-6-astra, high effort, and read-only execution. API credential sentinels were not used.
+- The updated provider-library combination passed the offline suites and translated live streaming check. Future users can run the opt-in scripts/test_live.py check with their own credentials; it uses provider credits/subscription usage and is excluded from CI.
+
+## Dependency and content review
+
+The first Python audit found 13 advisories in filelock 3.32.7. The release now pins filelock 4.2.9 and LiteLLM 1.109.0rc1. This official release candidate is needed because stable LiteLLM 1.108.0 still requires filelock below 4. Dependency compatibility, offline behavior, and live translation were checked; monitor upstream stable releases before updating the pins.
+
+After that correction, pip-audit 2.10.1 reported no known vulnerabilities in all 76 locked Python dependencies; pnpm audit reported zero advisories in production Node dependencies. Audits query current advisory databases and do not establish absence of undiscovered issues. Both audits are included in CI. License metadata is recorded in PYTHON_DEPENDENCIES.json; installed libraries and executables are excluded from the repository.
+
+The explicit release manifest, redacted gitleaks candidate scan, complete reachable-history scan, staged-diff check, and runtime-file exclusions passed. No original Git histories, keys (including encrypted keys), sessions, transcripts, databases, logs, plugin caches, binaries, or installed dependencies are included. GitHub commit authorship uses the account's public noreply identity.
+
+## GitHub publication
+
+Repository: https://github.com/teavert/claude-deepseek . Initial private Windows CI passed at https://github.com/teavert/claude-deepseek/actions/runs/42019047812 . The MIT/security update must also pass CI before visibility changes.
+
+Before publication, the repository had only main, no tags, releases, release attachments, or Actions artifacts. Dependency graph and Dependabot alerts were enabled. Private branch rules and secret scanning were unavailable on the account's current plan; public secret scanning, push protection, private vulnerability reporting, and main-branch rules must be enabled and verified immediately after the visibility change. Final public settings and clone results are recorded in the release notes after completion.

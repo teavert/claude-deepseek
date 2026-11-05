@@ -6,6 +6,7 @@ if ($PublicRelease -and -not (Test-Path LICENSE)) { throw 'Choose and add the re
 function Run($program, $arguments) { & $program @arguments; if ($LASTEXITCODE -ne 0) { throw "Check failed: $program" } }
 $node=(Get-Command node.exe -ErrorAction Stop).Source
 $python=Join-Path $PSScriptRoot 'gateway/venv/Scripts/python.exe'
+Run $python @('-m','pip','check')
 Run $python @('scripts/check_content.py')
 & ./scripts/Test-Install.ps1
 Run $python @('-m','unittest','discover','-s','gateway','-p','test_*.py')

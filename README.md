@@ -2,7 +2,7 @@
 
 Windows-first Claude Code profile with a local authenticated model gateway, native model routing, independent GPT review, and persistent evidence-based workflows.
 
-**Release preparation: license pending. Do not publish publicly until LICENSE is selected and release checks pass.**
+Licensed under the [MIT license](LICENSE). Copyright (c) 2026 teavert.
 
 Use PowerShell 7. Install Windows, Python 3.12, Node 24, pnpm 12.10.1, Claude Code, and Codex CLI. Put their executables on PATH. Sign into Codex with your own ChatGPT account. Provider accounts and model access are separate requirements. This project does not include accounts or credentials.
 
@@ -23,3 +23,7 @@ Setup generates config/settings.json, config/mcp.json, config/CLAUDE.md, gateway
 Use `Setup.ps1 -Offline -SkipCredentials` only after dependencies exist for local fixture testing. `Test-Release.ps1` uses mocked providers; it makes no paid model requests. Run `. ./scripts/Install-Gitleaks.ps1` to load the checksum-verified pinned scanner for the current shell. Public validation also needs `-PublicRelease`.
 
 See docs/ARCHITECTURE.md, docs/PUBLISH.md, docs/ANDROID.md, SECURITY.md, and THIRD_PARTY_NOTICES.md. Validation results and untested steps are recorded in docs/VALIDATION.md.
+
+The Python lock pins LiteLLM 1.109.0rc1 because the current stable release restricts filelock to a vulnerable major version. This official release candidate supports the patched filelock 4.2.9 pin; both offline and live integration checks are recorded in docs/VALIDATION.md.
+
+Optional live verification (uses your provider accounts): `gateway/venv/Scripts/python.exe scripts/test_live.py`. For independent reviewer verification, run `pnpm exec node test.mjs ABSOLUTE_FIXTURE_DIRECTORY` from reviewer with a fixture.json containing `{"nonce":"CEDAR-5812","values":[19,27,37]}`. Keep fixtures and results outside Git.

@@ -3,8 +3,9 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
 
-const root = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+const root = path.dirname(fileURLToPath(import.meta.url));
 const cwd = process.argv[2];
 const model = process.argv[3];
 const client = new Client({ name: 'subscription-integration-check', version: '1.0.0' });

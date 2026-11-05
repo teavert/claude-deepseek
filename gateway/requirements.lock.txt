@@ -16,7 +16,7 @@ cryptography==50.0.2
 distro==1.9.0
 docstring-parser==0.18.0
 fastuuid==0.14.0
-filelock==3.32.7
+filelock==4.2.9
 frozenlist==1.8.0
 fsspec==2026.9.0
 h11==0.16.0
@@ -36,7 +36,7 @@ jiter==0.18.0
 jmespath==1.1.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
-litellm==1.106.4
+litellm==1.109.0rc1
 markupsafe==3.0.4
 mcp==2.3.0
 mcp-types==2.3.0

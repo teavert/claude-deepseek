@@ -18,6 +18,8 @@ if (-not $Offline) {
     }
     & "$PSScriptRoot/gateway/venv/Scripts/python.exe" -m pip install -r "$PSScriptRoot/gateway/requirements.lock.txt"
     Check-Exit 'Python dependency installation'
+    & "$PSScriptRoot/gateway/venv/Scripts/python.exe" -m pip check
+    Check-Exit 'Python dependency compatibility'
     Push-Location "$PSScriptRoot/reviewer"
     try { & pnpm install --frozen-lockfile; Check-Exit 'Reviewer dependency installation' } finally { Pop-Location }
 }

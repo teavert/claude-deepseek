@@ -91,7 +91,7 @@
   },
   {
     "package": "filelock",
-    "version": "3.32.7",
+    "version": "4.2.9",
     "license_metadata": "MIT"
   },
   {
@@ -191,7 +191,7 @@
   },
   {
     "package": "litellm",
-    "version": "1.106.4",
+    "version": "1.109.0rc1",
     "license_metadata": "MIT"
   },
   {

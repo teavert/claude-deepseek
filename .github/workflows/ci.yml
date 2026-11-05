@@ -30,3 +30,15 @@ jobs:
         run: |
           . ./scripts/Install-Gitleaks.ps1
           ./Test-Release.ps1
+
+      - name: Dependency vulnerability checks
+        shell: pwsh
+        run: |
+          Push-Location reviewer
+          try { pnpm audit --prod; if ($LASTEXITCODE -ne 0) { throw 'Node dependency audit failed.' } } finally { Pop-Location }
+          $auditPython=Join-Path $env:RUNNER_TEMP 'dependency-audit/Scripts/python.exe'
+          python -m venv (Join-Path $env:RUNNER_TEMP 'dependency-audit')
+          & $auditPython -m pip install pip-audit==2.10.1
+          if ($LASTEXITCODE -ne 0) { throw 'Audit tool installation failed.' }
+          & $auditPython -m pip_audit -r gateway/requirements.lock.txt --no-deps --disable-pip
+          if ($LASTEXITCODE -ne 0) { throw 'Python dependency audit failed.' }
