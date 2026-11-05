@@ -37,3 +37,9 @@ The explicit release manifest, redacted gitleaks candidate scan, complete reacha
 Repository: https://github.com/teavert/claude-deepseek . Initial private Windows CI passed at https://github.com/teavert/claude-deepseek/actions/runs/42019047812 . The MIT/security update must also pass CI before visibility changes.
 
 Before publication, the repository had only main, no tags, releases, release attachments, or Actions artifacts. Dependency graph and Dependabot alerts were enabled. Private branch rules and secret scanning were unavailable on the account's current plan; public secret scanning, push protection, private vulnerability reporting, and main-branch rules must be enabled and verified immediately after the visibility change. Final public settings and clone results are recorded in the release notes after completion.
+
+## Temporary credential cleanup — 2026-11-05
+
+The owner removed all 12 DPAPI-encrypted credential files from the two temporary verification clones. A follow-up filesystem check confirmed that none of those temporary copies remained.
+
+SHA-256 comparisons against the fingerprints recorded before cleanup confirmed that all six working-installation credential files were still present and unchanged. This verification was read-only; no working credentials were deleted or modified. Credential contents, fingerprint values, and personal filesystem paths are not included in this record.
