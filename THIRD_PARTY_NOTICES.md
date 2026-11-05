@@ -1,6 +1,6 @@
 # Third-party software
 
-The owner confirmed authorship and publication rights for the gateway, workflow, reviewer bridge, and associated worker supervisor. No upstream Git histories are imported.
+The owner confirmed authorship and publication rights for the gateway, workflow, and reviewer bridge. No upstream Git histories are imported. The worker supervisor is exported from the same local integration; include it in the final provenance and license review before public release.
 
 Python license metadata for every locked dependency is recorded in docs/PYTHON_DEPENDENCIES.json. This metadata inventory is not a substitute for upstream license texts when redistributing installed dependencies.
 
