@@ -7,10 +7,10 @@ Windows-first release, licensed under MIT, copyright (c) 2026 teavert. The owner
 Python 3.12.16, Node 24.22.2, pnpm 12.10.1, gitleaks 8.30.1. The release uses locked dependencies and read-only Windows CI with actions pinned to verified commit hashes.
 
 - 66 gateway tests passed: routing, capacity guards, refusal/technical-failure boundaries, streaming/no replay, authentication, native transport, status isolation, GPT protocol/tool mapping, and admission.
-- 27 workflow tests ran: 26 passed, one skipped because Windows symlink creation was unavailable. Worker supervisor: four cross-process tests passed. Reviewer policy, shared queue/cancellation, and offline authentication-failure tests passed.
+- 27 workflow tests ran: 26 passed, one skipped because Windows symlink creation was unavailable. Worker supervisor: five tests cover cross-process admission/cleanup and Windows sharing-violation recovery. Reviewer policy, shared queue/cancellation, and offline authentication-failure tests passed.
 - Setup with spaces, repeated setup, preserved settings/token, generated DPAPI helper, missing credentials, and occupied port checks passed. A separate private clone installed its own dependencies and passed the complete offline release check.
 - A real isolated-clone launcher check passed through Start-ReliabilityGateway.ps1, Start-ClaudeDeepSeek.ps1, generated hooks/settings, Claude Code, and a live DeepInfra response. The clone used a fresh local gateway token and the owner's existing provider accounts. No provider credentials or session data were committed. Its gateway process was identified and stopped; the working installation was untouched.
-- One earlier worker-test startup timeout led to a longer fixture observation window and diagnostic output. Repeated local checks and independent GitHub Windows CI then passed.
+- Repeated checks isolated the earlier intermittent worker failure to Windows status-file rename sharing. The supervisor now retries only transient Windows permission/sharing errors for at most one second, retaining atomic publication and failing closed for persistent or unrelated errors. A deterministic regression test covers the reader-sharing failure.
 
 ## Live checks
 

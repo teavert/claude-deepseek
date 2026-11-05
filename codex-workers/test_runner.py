@@ -8,6 +8,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 RUNNER = Path(__file__).with_name('runner.py')
 
@@ -55,6 +56,25 @@ class WorkerTests(unittest.TestCase):
                 _, error = process.communicate()
                 details += repr(error)
         self.fail(f'{status.name} never reached {wanted}: {details}')
+
+    def test_status_publish_retries_windows_reader_sharing(self):
+        from runner import publish_status
+        status = self.root / 'status.json'
+        publish_status(status, 'queued')
+        replace = os.replace
+        attempts = []
+        def sharing_then_replace(source, destination):
+            attempts.append(1)
+            if len(attempts) == 1:
+                self.assertEqual(json.loads(status.read_text())['state'], 'queued')
+                error = PermissionError('Synthetic Windows sharing violation')
+                error.winerror = 5
+                raise error
+            return replace(source, destination)
+        with patch('runner.os.replace', side_effect=sharing_then_replace):
+            publish_status(status, 'running')
+        self.assertEqual(len(attempts), 2)
+        self.assertEqual(json.loads(status.read_text())['state'], 'running')
 
     def test_shared_two_worker_fifo_and_pipes(self):
         code = "import sys,time; print('ready',flush=True); sys.stdin.readline(); print('done',flush=True)"

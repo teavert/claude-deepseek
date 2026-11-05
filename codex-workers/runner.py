@@ -104,6 +104,20 @@ class Queue:
         self.db.close()
 
 
+def publish_status(status, state):
+    """Readers can briefly deny rename sharing on Windows; retry boundedly."""
+    temporary = status.with_suffix('.tmp')
+    temporary.write_text(json.dumps({'state': state}), encoding='utf-8')
+    for attempt in range(100):
+        try:
+            os.replace(temporary, status)
+            return
+        except PermissionError as error:
+            if getattr(error, 'winerror', None) not in {5, 32, 33} or attempt == 99:
+                raise
+            time.sleep(.01)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--status', required=True)
@@ -114,9 +128,7 @@ def main():
     command = args.command[1:] if args.command[:1] == ['--'] else args.command
     status = Path(args.status)
     def report(state):
-        temporary = status.with_suffix('.tmp')
-        temporary.write_text(json.dumps({'state': state}), encoding='utf-8')
-        os.replace(temporary, status)
+        publish_status(status, state)
     job_handle = protect_tree()
     parent, parent_born = os.getppid(), identity(os.getppid())
     queue, child = Queue(), None
